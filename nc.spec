@@ -1,7 +1,7 @@
 Summary: Reads and writes data across network connections using TCP or UDP
 Name: nc
 Version: 1.84
-Release: 22%{?dist}
+Release: 24%{?dist}
 URL:	 http://www.openbsd.org/cgi-bin/cvsweb/src/usr.bin/nc/
 # source is CVS checkout
 # CVSROOT=anoncvs@anoncvs1.usa.openbsd.org:/cvs cvs co -D 2005-10-26 src/usr.bin/nc
@@ -36,6 +36,10 @@ Patch10: nc-1.84-gcc4.3.patch
 Patch11: nc-1.84-efficient_reads.patch
 # patch 12 sent in the mail
 Patch12: nc-1.84-verbose-segfault.patch
+# rhbz#1064755
+Patch13: nc-1.84-remove-offensive-language.patch
+# rhbz#1000773
+Patch14: nc-1.84-understand-http11.patch
 
 License: BSD
 Group: Applications/Internet
@@ -71,9 +75,12 @@ capabilities.
 %patch10 -p1 -b .gcc
 %patch11 -p1 -b .reads
 %patch12 -p1 -b .verb-segfault
+%patch13 -p1 -b .language
+%patch14 -p1 -b .http11
 
 %build
 gcc $RPM_OPT_FLAGS -Werror -fno-strict-aliasing `pkg-config --cflags --libs glib-2.0` netcat.c atomicio.c socks.c -o nc
+rm -f scripts/*.language
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -92,6 +99,13 @@ rm -rf ${RPM_BUILD_ROOT}
 %doc README scripts
 
 %changelog
+* Wed Nov 26 2014 Petr Šabata <contyk@redhat.com> - 1.84-24
+- Remove the *.language backup files
+
+* Wed Nov 26 2014 Petr Šabata <contyk@redhat.com> - 1.84-23
+- Remove offensive language from some of the scripts (#1064755)
+- Accept HTTP/1.1 proxy responses (#1000773)
+
 * Tue Feb 09 2010 Jan Zeleny <jzeleny@redhat.com> - 1.84-22
 - changed license and some new comments in spec file
 
